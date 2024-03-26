@@ -1,4 +1,5 @@
 from manim import *
+from utils.grid import *
 
 class SquareToCircle(Scene):
     def construct(self):
@@ -88,8 +89,8 @@ class Wave(Scene):
         )
         label = MathTex("f(x) = -\\sin(x)").to_corner(UL)
 
+        get_grid_lines(plane), 
         self.add(
-            get_grid_lines(plane), 
             plane,
             sin_wave,
             label
