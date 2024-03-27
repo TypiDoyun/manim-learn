@@ -24,12 +24,12 @@ def get_grid_lines(
 def set_grid_lines(
     plane: NumberPlane,
     unit_count: int = 1,
-    stroke_color: ManimColor = BLUE,
+    stroke_color: ManimColor = BLUE_D,
     stroke_width: float = 1,
     stroke_opacity: float = 1,
-    second_stroke_color: ManimColor = BLUE,
+    second_stroke_color: ManimColor = BLUE_D,
     second_stroke_width: float = 1,
-    second_stroke_opacity: float = 0.4
+    second_stroke_opacity: float = 0.5
 ) -> None:
     grid = get_grid_lines(plane)
 
