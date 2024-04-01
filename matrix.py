@@ -4,6 +4,129 @@ from utils.transform import *
 
 direction = np.array([ 4, 2 ])
 
+class MatrixDotScene(Scene):
+    def construct(self):
+
+        matrix = Matrix([
+            ["a", "b", "c"],
+            ["d", "e", "f"],
+            ["g", "h", "i"]
+        ])
+
+        # 화면에 표시
+        self.play(Create(matrix))
+        self.wait(1)
+
+        # 화면에 변경된 행렬을 업데이트
+        self.wait(1)
+
+        formula = VGroup(
+            Matrix(
+                [
+                    [ 2, 1 ],
+                    [ 0, 1 ]
+                ],
+                h_buff = 0.75
+            ),
+            MathTex(r"\cdot"),
+            Matrix(
+                [
+                    [ 1 ],
+                    [ 2 ]
+                ],
+                h_buff = 0.75
+            )
+        )
+
+        result = Matrix(
+            [
+                [ 1, 2 ],
+                [ 3, 4 ]
+            ],
+            v_buff = 0.75
+        )
+
+        result_formula = VGroup(
+            MathTex(" = "),
+            result
+        )
+
+        result_formula.arrange()
+
+        formula[0].set_column_colors(RED, GREEN)
+        formula[2].set_row_colors(RED, GREEN)
+        formula.arrange()
+
+        self.play(
+            Write(formula),
+            run_time = 2
+        )
+
+        self.play(
+            formula.animate.move_to(LEFT * 4)
+        )
+
+        # new_value = 5
+        # formula[0].get_entries()[0][0].set_value(new_value)
+        # self.play(Transform(formula[0].get_entries()[0][0], Tex(str(new_value))))
+        # self.wait(1)
+
+        result_formula.move_to(formula[2].get_right() + RIGHT * 1.65)
+
+        self.play(
+            Write(result_formula[0]),
+            Write(result.get_brackets())
+        )
+
+        m1 = Matrix(
+            [
+                [ 0, 0 ],
+            ],
+            h_buff = 0.75
+        )
+        m2 = Matrix(
+            [
+                [ 0 ],
+                [ 0 ]
+            ],
+            v_buff = 0.75
+        )
+
+        mul_formula = VGroup(
+            m1,
+            MathTex(r"\cdot"),
+            m2
+        )
+
+        mul_formula[0].move_to(formula[0].get_bottom() + DOWN * 2)
+        mul_formula[1].move_to(mul_formula[0].get_right() + RIGHT * 0.3)
+        mul_formula[2].move_to(mul_formula[1].get_right() + RIGHT * 0.75)
+
+        self.play(
+            Write(mul_formula[0].get_brackets()),
+            Write(mul_formula[1]),
+            Write(mul_formula[2].get_brackets()),
+        )
+
+        mul_formula[0][0][0] = MathTex(r"\frac{1}{2}")
+
+        formula_row_1 = VGroup(
+            formula[0].get_rows()[0][0].copy(),
+            formula[0].get_rows()[0][1].copy(),
+        )
+
+        for i, tex in enumerate(formula_row_1):
+            tex.move_to(mul_formula[0][0][i].get_center())
+
+        self.play(
+            ReplacementTransform(
+                formula[0].get_rows()[0].copy(),
+                mul_formula[0].get_rows()[0]
+            )
+        )
+        
+
+
 class BasisScene(Scene):
     def construct(self):
         grid = NumberPlane(
