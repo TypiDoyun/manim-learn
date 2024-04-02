@@ -6,33 +6,20 @@ direction = np.array([ 4, 2 ])
 
 class MatrixDotScene(Scene):
     def construct(self):
-
-        matrix = Matrix([
-            ["a", "b", "c"],
-            ["d", "e", "f"],
-            ["g", "h", "i"]
+        transform_matrix = np.array([
+            [ 2, 1 ],
+            [ 0, 1 ]
         ])
-
-        # 화면에 표시
-        self.play(Create(matrix))
-        self.wait(1)
-
-        # 화면에 변경된 행렬을 업데이트
-        self.wait(1)
-
         formula = VGroup(
             Matrix(
-                [
-                    [ 2, 1 ],
-                    [ 0, 1 ]
-                ],
+                transform_matrix,
                 h_buff = 0.75
             ),
             MathTex(r"\cdot"),
             Matrix(
                 [
-                    [ 1 ],
-                    [ 2 ]
+                    [ int(direction[0] / 2) ],
+                    [ int(direction[1] / 2) ]
                 ],
                 h_buff = 0.75
             )
@@ -40,8 +27,8 @@ class MatrixDotScene(Scene):
 
         result = Matrix(
             [
-                [ 1, 2 ],
-                [ 3, 4 ]
+                [ 0 ],
+                [ 0 ]
             ],
             v_buff = 0.75
         )
@@ -63,7 +50,7 @@ class MatrixDotScene(Scene):
         )
 
         self.play(
-            formula.animate.move_to(LEFT * 4)
+            formula.animate.move_to(LEFT * 4.75)
         )
 
         # new_value = 5
@@ -71,7 +58,7 @@ class MatrixDotScene(Scene):
         # self.play(Transform(formula[0].get_entries()[0][0], Tex(str(new_value))))
         # self.wait(1)
 
-        result_formula.move_to(formula[2].get_right() + RIGHT * 1.65)
+        result_formula.move_to(formula[2].get_right() + RIGHT)
 
         self.play(
             Write(result_formula[0]),
@@ -108,22 +95,233 @@ class MatrixDotScene(Scene):
             Write(mul_formula[2].get_brackets()),
         )
 
-        mul_formula[0][0][0] = MathTex(r"\frac{1}{2}")
-
-        formula_row_1 = VGroup(
-            formula[0].get_rows()[0][0].copy(),
-            formula[0].get_rows()[0][1].copy(),
+        result_tex = VGroup(
+            MathTex(formula[0].get_rows()[0][0].copy().get_tex_string()),
+            MathTex("\\times"),
+            MathTex(formula[2].get_columns()[0][0].copy().get_tex_string()),
+            MathTex("+"),
+            MathTex(formula[0].get_rows()[0][1].copy().get_tex_string()),
+            MathTex("\\times"),
+            MathTex(formula[2].get_columns()[0][1].copy().get_tex_string()),
+        )
+        result_tex[0].set_color(RED)
+        result_tex[2].set_color(RED)
+        result_tex[4].set_color(GREEN)
+        result_tex[6].set_color(GREEN)
+        result_tex.arrange()
+        result_matrix = MobjectMatrix(
+            [
+                [
+                    result_tex
+                ]
+            ]
         )
 
-        for i, tex in enumerate(formula_row_1):
-            tex.move_to(mul_formula[0][0][i].get_center())
+        r1 = VGroup(
+            MathTex(" = "),
+            result_matrix
+        )
+        r1.arrange()
+        r1.move_to(mul_formula[2].get_right() + RIGHT * 2.4)
+
+        self.play(
+            Write(r1[0]),
+            Write(r1[1].get_brackets())
+        )
+
+        items = [ None, None ]
+
+        for i in range(2):
+            formula_row_1 = VGroup(
+                formula[0].get_rows()[i][0].copy(),
+                formula[0].get_rows()[i][1].copy(),
+            )
+            formula_column_1 = VGroup(
+                formula[2].get_columns()[0][0].copy(),
+                formula[2].get_columns()[0][1].copy(),
+            )
+
+            for j, tex in enumerate(formula_row_1):
+                tex.move_to(mul_formula[0][0][j].get_center())
+            
+            for j, tex in enumerate(formula_column_1):
+                tex.move_to(mul_formula[2][0][j].get_center())
+
+            self.play(
+                ReplacementTransform(
+                    formula[0].get_rows()[i].copy(),
+                    formula_row_1
+                ),
+                ReplacementTransform(
+                    formula[2].get_columns()[0].copy(),
+                    formula_column_1
+                )
+            )
+            result_tex = VGroup(
+                MathTex(formula_row_1[0].get_tex_string()),
+                MathTex("\\times"),
+                MathTex(formula_column_1[0].get_tex_string()),
+                MathTex("+"),
+                MathTex(formula_row_1[1].get_tex_string()),
+                MathTex("\\times"),
+                MathTex(formula_column_1[1].get_tex_string()),
+            )
+            result_tex[0].set_color(RED)
+            result_tex[2].set_color(RED)
+            result_tex[4].set_color(GREEN)
+            result_tex[6].set_color(GREEN)
+            result_tex.arrange()
+            result_matrix = MobjectMatrix(
+                [
+                    [
+                        result_tex
+                    ]
+                ]
+            )
+
+            r = VGroup(
+                MathTex(" = "),
+                result_matrix
+            )
+            r.arrange()
+            r.move_to(mul_formula[2].get_right() + RIGHT * 2.4)
+            self.play(
+                ReplacementTransform(
+                    formula_row_1[0],
+                    result_matrix[0][0][0]
+                ),
+                ReplacementTransform(
+                    formula_column_1[0],
+                    result_matrix[0][0][2]
+                ),
+                run_time = 0.5
+            )
+            self.play(
+                Write(result_matrix[0][0][1]),
+                run_time = 0.5
+            )
+            self.play(
+                Write(result_matrix[0][0][3]),
+                run_time = 0.5
+            )
+            self.play(
+                ReplacementTransform(
+                    formula_row_1[1],
+                    result_matrix[0][0][4]
+                ),
+                ReplacementTransform(
+                    formula_column_1[1],
+                    result_matrix[0][0][6]
+                ),
+                run_time = 0.5
+            )
+            self.play(
+                Write(result_matrix[0][0][5]),
+                run_time = 0.5
+            )
+
+            items[i] = MathTex(f"{int(formula_row_1[0].get_tex_string()) * int(formula_column_1[0].get_tex_string()) + int(formula_row_1[1].get_tex_string()) * int(formula_column_1[1].get_tex_string())}")
+            items[i].set_color(RED if i == 0 else GREEN)
+            items[i].move_to(result[0][i].get_center())
+
+            self.play(
+                ReplacementTransform(
+                    result_matrix[0][0],
+                    items[i]
+                )
+            )
+            self.wait(1)
+
+        self.wait(1)
+
+        f = VGroup(
+            formula,
+            result_formula[0],
+            result_formula[1].get_brackets(),
+            items[0],
+            items[1],
+        )
+
+        f_copy = f.copy()
+
+        self.remove(*f)
+        self.add(f_copy)
+
+        f.shift(LEFT * 1.25 + UP * 3)
+        f.scale(0.75)
+        f.set_z_index(100)
+
+        grid = NumberPlane(
+            x_range = ( -32, 32 ),
+            y_range = ( -32 * (1080 / 1920), 32 * (1080 / 1920) ),
+            x_length = self.camera.frame_width * 2,
+            y_length = self.camera.frame_height * 2,
+        )
+
+        second_grid = grid.copy()
+
+        set_grid_lines(grid)
+        set_grid_lines(
+            second_grid,
+            stroke_color = WHITE,
+            second_stroke_color = WHITE,
+            opacity = 0.35
+        )
+        
+        self.play(
+            Unwrite(m1.get_brackets()),
+            Unwrite(mul_formula[1]),
+            Unwrite(m2.get_brackets()),
+            Unwrite(r1[0]),
+            Unwrite(r1[1].get_brackets()),
+            ReplacementTransform(
+                f_copy,
+                f
+            ),
+            Write(grid)
+        )
+
+        vector = Vector(
+            grid.c2p(*direction)
+        )
+
+        transformed_vector = Vector(
+            grid.c2p(*transform_matrix.dot(direction))
+        )
 
         self.play(
             ReplacementTransform(
-                formula[0].get_rows()[0].copy(),
-                mul_formula[0].get_rows()[0]
+                f[0][2].copy(),
+                vector
             )
         )
+        self.play(
+            ReplacementTransform(
+                f[2].copy(),
+                transformed_vector
+            )
+        )
+
+        second_grid.set_z_index(0)
+
+        self.play(
+            FadeIn(second_grid),
+            grid.animate.apply_matrix(transform_matrix),
+            ReplacementTransform(
+                f[0][0].copy(),
+                transformed_vector
+            ),
+            ApplyMethod(
+                vector.put_start_and_end_on,
+                *get_transformed_vector(
+                    grid,
+                    vector,
+                    transform_matrix
+                )
+            )
+        )
+
+        self.wait(1)
         
 
 
@@ -404,6 +602,7 @@ class MatrixScene(Scene):
             ],
             h_buff = 0.75
         )
+        vector.set_column_colors(RED, GREEN)
 
         self.play(
             Write(vector),
@@ -411,6 +610,7 @@ class MatrixScene(Scene):
         )
 
         self.wait(1)
+
 
         grid = NumberPlane(
             x_range = ( -32, 32 ),
