@@ -295,6 +295,9 @@ class MatrixDotScene(Scene):
                 vector
             )
         )
+
+        self.wait(1)
+
         self.play(
             ReplacementTransform(
                 f[2].copy(),
@@ -303,6 +306,7 @@ class MatrixDotScene(Scene):
         )
 
         second_grid.set_z_index(0)
+        self.wait(1)
 
         self.play(
             FadeIn(second_grid),
