@@ -325,7 +325,7 @@ class MatrixDotScene(Scene):
             )
         )
 
-        self.wait(1)
+        self.wait(2)
         
 
 
