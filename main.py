@@ -10,8 +10,6 @@ class Intro(Scene):
 
         # 초기 텍스트 추가
         self.play(Write(text))
-
-        # 2초 대기
         self.wait(2)
 
         # 추가할 텍스트 설정
