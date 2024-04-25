@@ -11,8 +11,7 @@ class Intro(Scene):
         # 초기 텍스트 추가
         self.play(Write(text))
         self.wait(2)
-
-        # 추가할 텍스트 설정
+        
         new_text = VGroup(
             Text("What is "),
             Text("Domain Name"),
